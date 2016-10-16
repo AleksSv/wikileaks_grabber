@@ -8,7 +8,7 @@ def main(argv):
     end = 10
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["start=", "end="])
+        opts, args = getopt.getopt(argv, "hi:s:e:", ["start=", "end="])
     except getopt.GetoptError:
         print('wikileaks.py -s <start_index> -e <end_index>')
         sys.exit(2)
