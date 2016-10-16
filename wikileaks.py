@@ -1,5 +1,7 @@
 import os
 import sys, getopt
+from threading import *
+
 from urllib.request import urlopen
 
 def main(argv):
@@ -25,19 +27,40 @@ def main(argv):
     print("Grabbing emails from " + str(start) + " to " + str(end))
 
     directory = "podesta"
+    urls = []
+
 
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     for i in range(start, end + 1):
 
-        u = urlopen("https://wikileaks.org/podesta-emails//get/" + str(i))
-        filename = str(i) + ".eml"
-        localFile = open(directory + "/" + filename, 'wb')
-        localFile.write(u.read())
-        localFile.close()
+        urls.append(["https://wikileaks.org/podesta-emails//get/" + str(i),str(i) + ".eml"])
 
-        print("Downloaded " + filename)
+        # u = urlopen("https://wikileaks.org/podesta-emails//get/" + str(i))
+        # filename =
+        # localFile = open(directory + "/" + filename, 'wb')
+        # localFile.write(u.read())
+        # localFile.close()
+
+
+
+    class worker(Thread):
+        def __init__(self, link, filename):
+            Thread.__init__(self)
+            self.link = link
+            self.filename = filename
+            self.start()
+        def run(self):
+            u = urlopen(self.link)
+            localFile = open(directory + "/" + self.filename, 'wb')
+            localFile.write(u.read())
+            localFile.close()
+            print("Downloaded " + self.filename)
+
+    for url in urls:
+        worker(url[0],url[1])
+
 
 if __name__ == "__main__":
    main(sys.argv[1:])
